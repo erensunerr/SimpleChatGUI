@@ -5,11 +5,11 @@ s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 port = 0
 
 
-def ipParse():
-	if platform.system() == 'Windows':
-		x = subprocess.check_output(['ipconfig'])
-	else:
-		x = subprocess.check_output(['ifconfig'])
+#def ipParse():
+#	if platform.system() == 'Windows':
+#		x = subprocess.check_output(['ipconfig'])
+#	else:
+#		x = subprocess.check_output(['ifconfig'])
 
 
 def send():
@@ -23,7 +23,7 @@ def receive():
 	while True:
 			data = s.recv(1024)
 			if data:
-				Label(0,data)
+				Label(0,data.encode('utf-8'))
 
 def reset():
 	global port,IPtoConnect
@@ -42,13 +42,18 @@ def reset():
 
 def openConnection():
 	global IPtoConnect,port
-	SendEntry.config(state='normal')
-	SendButton.config(state='normal')
-	SendEntry.delete(0,'end')
+	T_IB = threading.Thread(target=IggyBiggy)
+	T_IB.start()
+
+
+def IggyBiggy():
 	try:
 		s.connect((IPtoConnect,port))
 		T_Receive = threading.Thread(target=receive)
 		T_Receive.start()
+		SendEntry.config(state='normal')
+		SendButton.config(state='normal')
+		SendEntry.delete(0,'end')
 	except:
 		messagebox.showwarning("Connection Error","Can't Connect to {0}:{1}".format(IPtoConnect,port))
 		reset()
@@ -57,8 +62,8 @@ def openConnection():
 
 def checkPortEntry():
 	global port
-	if len(PortEntry.get()) > 4 :
-		messagebox.showwarning("Port Error","Length of port (4 max) is shorter than "+str(len(PortEntry.get())))
+	if len(PortEntry.get()) > 5 :
+		messagebox.showwarning("Port Error","Length of port (5 max) is shorter than "+str(len(PortEntry.get())))
 		PortEntry.delete(0,len(PortEntry.get()))
 	else:
 		try:
@@ -135,7 +140,7 @@ SendButton.config(state='disabled')
 
 SendEntry = tkinter.Entry(top,justify='left',relief='flat',width=48)
 SendEntry.place(x = 50 , y= 403)
-SendEntry.insert(1,"You must first enter the IP and Port")
+SendEntry.insert(1,"Enter IP and Port, be Patient")
 SendEntry.config(state='disabled')
 
 

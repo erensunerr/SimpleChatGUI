@@ -22,16 +22,21 @@ def receive():
 	while True:
 			data = cs.recv(1024)
 			if data:
-				Label(0,data)
+				Label(0,data.decode('utf-8'))
 
 def Connection():
-	global LorP,LIP,PIP,port,s
 	R1.config(state='disabled')
 	R2.config(state='disabled')
 	RadioPick.config(state = 'disabled')
 	SendEntry.config(state='normal')
-	SendEntry.insert(1,"Waiting for someone to connect")
+	SendEntry.delete(0,'end')
+	SendEntry.insert(0,"Waiting for someone to connect")
 	SendEntry.config(state='disabled')
+	T_SB = threading.Thread(target=SocketyBuckety)
+	T_SB.start()
+
+def SocketyBuckety():
+	global LorP,LIP,PIP,port,s
 	s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 	if LorP == 0:
 		s.bind((LIP,port))
@@ -40,12 +45,14 @@ def Connection():
 	T_Listen = threading.Thread(target=Listen)
 	T_Listen.start()
 
+
 def Listen():
 	global s,cs,address
 	s.listen(1)
 	cs, address = s.accept()
-	Label(0,"{0} is now connected.".format(address[0]))
 	SendEntry.config(state='normal')
+	SendEntry.delete(0,'end')
+	Label(0,"{0} is now connected.".format(address[0]))
 	SendButton.config(state='normal')
 	T_Receive = threading.Thread(target=receive)
 	T_Receive.start()
