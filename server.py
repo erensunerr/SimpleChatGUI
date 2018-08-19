@@ -10,7 +10,7 @@ port = random.randint(500,20000)
 
 
 
-def send():
+def send(Entry=0):
 	global cs
 	j = SendEntry.get()
 	cs.send(j.encode('utf-8'))
@@ -40,16 +40,20 @@ def SocketyBuckety():
 	s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 	if LorP == 0:
 		s.bind((LIP,port))
+		print("Port {0} has been binded at {1}".format(port,LIP))
 	elif LorP == 1:
 		s.bind((PIP,port))
+		print("Port {0} has been binded at {1}".format(port,LIP))
 	T_Listen = threading.Thread(target=Listen)
 	T_Listen.start()
 
 
 def Listen():
 	global s,cs,address
+	print("Listening...")
 	s.listen(1)
 	cs, address = s.accept()
+	print("Someone accepted")
 	SendEntry.config(state='normal')
 	SendEntry.delete(0,'end')
 	Label(0,"{0} is now connected.".format(address[0]))
@@ -77,7 +81,7 @@ top.geometry("500x500")
 top.title("Simple Chat")
 top.resizable(False,False)
 
-top.bind('<Return>', Label)
+top.bind('<Return>', send)
 
 
 PortLabel = tkinter.Label(top,text="Port: {0}".format(port))
@@ -89,8 +93,18 @@ PublicIPLabel = tkinter.Label(top,text="Public IP: {0}".format(PIP))
 PublicIPLabel.place(x = 295, y = 30)
 
 
+def get_ip():
+	s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+	try:
+		s.connect(('10.255.255.255',1))
+		IP= s.getsockname()[0]
+	except:
+		IP='127.0.0.1'
+	finally:
+		s.close()
+	return IP
 
-LIP = socket.gethostbyname(socket.getfqdn())
+LIP = get_ip()
 LocalIPLabel = tkinter.Label(top,text="Local IP: {0}".format(LIP))
 LocalIPLabel.place(x = 295, y = 10)
 

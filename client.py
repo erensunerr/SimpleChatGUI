@@ -23,16 +23,17 @@ def receive():
 	while True:
 			data = s.recv(1024)
 			if data:
-				Label(0,data.encode('utf-8'))
+				Label(0,data.decode('utf-8'))
 
 def reset():
 	global port,IPtoConnect
 	PortButton.config(state='normal')
 	PortEntry.config(state='normal')
-	PortEntry.delete(0,len(PortEntry.get()))
+	PortEntry.delete(0,'end')
 	IPButton.config(state='normal')
 	IPEntry.config(state='normal')
-	IPEntry.delete(0,len(IPEntry.get()))
+	IPEntry.delete(0,'end')
+	SendEntry.delete(0,'end')
 	SendEntry.config(state='disabled')
 	SendButton.config(state='disabled')
 	port = 0
@@ -42,13 +43,16 @@ def reset():
 
 def openConnection():
 	global IPtoConnect,port
+	print("Goin' IggyBiggy")
 	T_IB = threading.Thread(target=IggyBiggy)
 	T_IB.start()
 
 
 def IggyBiggy():
 	try:
+		print("Trying to connect {0}:{1}".format(IPtoConnect,port))
 		s.connect((IPtoConnect,port))
+		print("Connected")
 		T_Receive = threading.Thread(target=receive)
 		T_Receive.start()
 		SendEntry.config(state='normal')
