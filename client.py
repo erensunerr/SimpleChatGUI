@@ -115,7 +115,6 @@ top.geometry("500x500")
 top.title("Simple Chat")
 top.resizable(False,False)
 
-top.bind('<Return>', Label)
 
 ResetButton = tkinter.Button(top,text="Reset",command=reset,width=6, height=1,relief='groove')
 ResetButton.place(x=3,y=3)

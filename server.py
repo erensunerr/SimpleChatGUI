@@ -10,7 +10,7 @@ port = random.randint(500,20000)
 
 
 
-def send(Entry=0):
+def send():
 	global cs
 	j = SendEntry.get()
 	cs.send(j.encode('utf-8'))
@@ -81,7 +81,6 @@ top.geometry("500x500")
 top.title("Simple Chat")
 top.resizable(False,False)
 
-top.bind('<Return>', send)
 
 
 PortLabel = tkinter.Label(top,text="Port: {0}".format(port))
